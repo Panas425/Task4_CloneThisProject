@@ -1,5 +1,16 @@
 ﻿using System;
-
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Text;
+//1. Stacken är en mängd av boxar som är staplade på varandra. Översta innehållet 
+//används först. Innehållet som ligger under nås endast om den som är över lyfts av
+//Heapen är att allt innehåll är tillgängligt på en gång med enkel åtkomst
+//2. En reference type lagras på heapen medan en value type lagras där de lagras, kan vara
+//på både stack eller heap.
+//3. Den första returnerar 3 eftersom variable x tilldelas värdet 3, den andra returnerar 4
+//eftersom MyValue tilldelas värdet 4
 namespace SkalProj_Datastrukturer_Minne
 {
     class Program
@@ -18,6 +29,7 @@ namespace SkalProj_Datastrukturer_Minne
                     + "\n2. Examine a Queue"
                     + "\n3. Examine a Stack"
                     + "\n4. CheckParenthesis"
+                    + "\n5. ReverseText"
                     + "\n0. Exit the application");
                 char input = ' '; //Creates the character input to be used with the switch-case below.
                 try
@@ -42,6 +54,9 @@ namespace SkalProj_Datastrukturer_Minne
                         break;
                     case '4':
                         CheckParanthesis();
+                        break;
+                    case '5':
+                        ReverseText();
                         break;
                     /*
                      * Extend the menu to include the recursive 
@@ -70,14 +85,51 @@ namespace SkalProj_Datastrukturer_Minne
              * In both cases, look at the count and capacity of the list
              * As a default case, tell them to use only + or -
              * Below you can see some inspirational code to begin working.
+             * 
+                2. När ökar listans kapacitet? (Alltså den underliggande arrayens storlek)
+                   När jag lägger till ett värde
+                3. Med hur mycket ökar kapaciteten?
+                   Med 4
+                4. Varför ökar inte listans kapacitet i samma takt som element läggs till?
+                   I C# ökas inte kapaciteten linjärt
+                5. Minskar kapaciteten när element tas bort ur listan?
+                   Nej
+                6. När är det då fördelaktigt att använda en egendefinierad array istället för en lista?
+                   När man vill minska antalet minnesallokeringar och kopieringar av 
+                   element och öka kapaciteten expontiellt om det behövs
+
             */
+            List<string> theList = new List<string>();
+            bool run = true;
+            while (run)
+            { 
+            string input = Console.ReadLine();
+            char nav = input[0];
+            string value = input.Substring(1);
+                
 
-            //List<string> theList = new List<string>();
-            //string input = Console.ReadLine();
-            //char nav = input[0];
-            //string value = input.substring(1);
+            switch (nav)
+            {
+                case '+':
+                    theList.Add(value);
+                    Console.WriteLine("Capacitet: " + theList.Capacity);
+                        Console.WriteLine("Count: " + theList.Count);
+                        break;
+                case '-':
+                    theList.Remove(value);
+                    Console.WriteLine("Capacitet: " + theList.Capacity);
+                        Console.WriteLine("Count: " + theList.Count);
+                        break;
+                    case '0':
+                        run = false;
+                        break;
+                    default:
+                    Console.WriteLine("Use only + or -");
+                    break;
+            }
+            }
 
-            //switch(nav){...}
+
         }
 
         /// <summary>
@@ -89,7 +141,60 @@ namespace SkalProj_Datastrukturer_Minne
              * Loop this method untill the user inputs something to exit to main menue.
              * Create a switch with cases to enqueue items or dequeue items
              * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
+             * 
+             * 
             */
+            Queue queue = new Queue();
+            bool run = true;
+
+            while (run) { 
+            string input = Console.ReadLine();
+            char nav = input[0];
+            string value = input.Substring(1);
+            switch (nav)
+            {
+                case '+':
+                    queue.Enqueue(value);
+                    foreach (var element in queue)
+                    {
+                        Console.WriteLine(element);
+                        }
+                    break;
+                case '-':
+                    queue.Dequeue();
+                        foreach (var element in queue)
+                    {
+                        Console.WriteLine(element);
+                    }
+                    break;
+                case '0':
+                        run = false;
+                        break;
+                    default:
+                    Console.WriteLine("Use only + or -");
+                    break;
+            }
+            }
+
+
+        }
+        //2
+        static void ReverseText()
+        {
+            Stack stack = new Stack();
+            string input = Console.ReadLine();
+            char[] reverse = input.ToCharArray();
+            foreach (char c in reverse)
+            {
+                stack.Push(c);
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach (char value in stack)
+            {
+                sb.Append(value);
+            }
+            Console.WriteLine("Reversed text: " + sb.ToString().Trim());
+
         }
 
         /// <summary>
@@ -101,7 +206,41 @@ namespace SkalProj_Datastrukturer_Minne
              * Loop this method until the user inputs something to exit to main menue.
              * Create a switch with cases to push or pop items
              * Make sure to look at the stack after pushing and and poping to see how it behaves
+             * 1. Första objekten som lades kommer att vara lagrad nederst, ser inte bra ut
+             * 
             */
+
+            Stack stack = new Stack();
+            bool run = true;
+            while (run)
+            {
+                string input = Console.ReadLine();
+                char nav = input[0];
+                string value = input.Substring(1);
+                switch (nav)
+                {
+                    case '+':
+                        stack.Push(value);
+                        foreach (var element in stack)
+                        {
+                            Console.WriteLine(element);
+                        }
+                        break;
+                    case '-':
+                        stack.Pop();
+                        foreach (var element in stack)
+                        {
+                            Console.WriteLine(element);
+                        }
+                        break;
+                    case '0':
+                        run = false;
+                        break;
+                    default:
+                        Console.WriteLine("Use only + or -");
+                        break;
+                }
+            }
         }
 
         static void CheckParanthesis()
@@ -110,7 +249,43 @@ namespace SkalProj_Datastrukturer_Minne
              * Use this method to check if the paranthesis in a string is Correct or incorrect.
              * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
              * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
+             * 
+             * 1. Anvander stack for att man ska kunna kolla forsta och sista parantesen med hjalp av FILO
              */
+
+            Stack<char> stack = new Stack<char>();
+            string input = Console.ReadLine();
+            bool checkParentheses = false;
+
+            foreach (char c in input) {
+                if (c=='(' || c=='{' || c=='[')
+                {
+                    stack.Push(c);
+                }
+                else if (c == ')' || c == '}' || c == ']') {
+
+                    if (stack.Count != 0)
+                    {
+                        char c2 = stack.Pop();
+
+                        if ((c == ')' && c2 == '(') ||
+                            (c == '}' && c2 == '{') ||
+                            (c == ']' && c2 == '['))
+                        {
+                            checkParentheses = true;
+                        }
+                    }
+
+                }
+            }
+            if (checkParentheses)
+            {
+                Console.WriteLine("The string is well-formed");
+            } else
+            {
+                Console.WriteLine("The string is not well-formed");
+                Console.ReadLine();
+            }
 
         }
 
